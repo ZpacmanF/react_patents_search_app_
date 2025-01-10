@@ -2,16 +2,14 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
 }
 
 export interface Patent {
-  id: string;
-  title: string;
+  _id: string;
+  name: string;
   description: string;
-  inventors: string[];
-  filingDate: string;
-  status: 'pending' | 'approved' | 'rejected';
+  category: string;
+  createdBy: string;
   createdAt: string;
-  updatedAt: string;
 }
