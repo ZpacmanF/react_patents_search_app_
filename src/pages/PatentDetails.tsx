@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { FileText, Calendar, Users, Trash2, Edit } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { patents } from '../api';
-import type { Patent } from '../types';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { FileText, Calendar, Trash2, Edit } from "lucide-react";
+import toast from "react-hot-toast";
+import { patents } from "../api";
+import type { Patent } from "../types";
 
 export default function PatentDetails() {
   const { id } = useParams();
@@ -17,8 +17,8 @@ export default function PatentDetails() {
         const data = await patents.getById(id!);
         setPatent(data);
       } catch (error) {
-        toast.error('Erro ao carregar patente');
-        navigate('/');
+        toast.error("Erro ao carregar patente");
+        navigate("/");
       } finally {
         setLoading(false);
       }
@@ -28,16 +28,16 @@ export default function PatentDetails() {
   }, [id, navigate]);
 
   const handleDelete = async () => {
-    if (!window.confirm('Tem certeza que deseja excluir esta patente?')) {
+    if (!window.confirm("Tem certeza que deseja excluir esta patente?")) {
       return;
     }
 
     try {
       await patents.delete(id!);
-      toast.success('Patente excluída com sucesso');
-      navigate('/');
+      toast.success("Patente excluída com sucesso");
+      navigate("/");
     } catch (error) {
-      toast.error('Erro ao excluir patente');
+      toast.error("Erro ao excluir patente");
     }
   };
 
@@ -55,7 +55,7 @@ export default function PatentDetails() {
         <div>
           <h3 className="text-lg leading-6 font-medium text-gray-900 flex items-center">
             <FileText className="h-5 w-5 text-indigo-500 mr-2" />
-            {patent.title}
+            {patent.name}
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-gray-500">
             Detalhes da patente
@@ -80,36 +80,25 @@ export default function PatentDetails() {
       </div>
       <div className="border-t border-gray-200">
         <dl>
-          <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium text-gray-500 flex items-center">
-              <Users className="h-4 w-4 mr-2" />
-              Inventores
-            </dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-              {patent.inventors.join(', ')}
-            </dd>
-          </div>
           <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500 flex items-center">
               <Calendar className="h-4 w-4 mr-2" />
-              Data de Registro
+              Data de Criação
             </dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-              {new Date(patent.filingDate).toLocaleDateString()}
+              {new Date(patent.createdAt).toLocaleDateString()}
             </dd>
           </div>
           <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium text-gray-500">Status</dt>
-            <dd className="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                {patent.status}
-              </span>
-            </dd>
-          </div>
-          <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className="text-sm font-medium text-gray-500">Descrição</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {patent.description}
+            </dd>
+          </div>
+          <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt className="text-sm font-medium text-gray-500">Categoria</dt>
+            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              {patent.category}
             </dd>
           </div>
         </dl>

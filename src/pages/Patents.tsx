@@ -1,33 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, FileText } from 'lucide-react';
-import { patents } from '../api';
-import type { Patent } from '../types';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Search, FileText } from "lucide-react";
+import { patents } from "../api";
+import toast from "react-hot-toast";
+import { Patent } from "../types";
 
 export default function Patents() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [patentList, setPatentList] = useState<Patent[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const searchPatents = async (query: string) => {
     setLoading(true);
+    setError(null);
     try {
-      const data = await patents.search(query);
-      setPatentList(data);
+      console.log("Iniciando busca com query:", query);
+      const response = await patents.search();
+
+      if (Array.isArray(response)) {
+        setPatentList(response);
+      } else if (response?.data && Array.isArray(response.data)) {
+        setPatentList(response.data);
+      } else {
+        throw new Error("Formato de resposta inválido");
+      }
     } catch (error) {
-      console.error('Error searching patents:', error);
+      console.error("Erro ao buscar patentes:", error);
+      setError("Falha ao carregar as patentes. Por favor, tente novamente.");
+      toast.error("Erro ao buscar patentes");
+      setPatentList([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    searchPatents('');
+    searchPatents(""); // Busca todas as patentes ao carregar o componente
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     searchPatents(searchQuery);
+  };
+
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString("pt-BR");
+    } catch (error) {
+      console.error("Erro ao formatar data:", dateString, error);
+      return dateString;
+    }
   };
 
   return (
@@ -62,6 +85,8 @@ export default function Patents() {
 
       {loading ? (
         <div className="text-center py-12">Carregando...</div>
+      ) : error ? (
+        <div className="text-center py-12 text-red-500">{error}</div>
       ) : patentList.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
           Nenhuma patente encontrada
@@ -70,9 +95,9 @@ export default function Patents() {
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           <ul className="divide-y divide-gray-200">
             {patentList.map((patent) => (
-              <li key={patent.id}>
+              <li key={patent._id}>
                 <Link
-                  to={`/patents/${patent.id}`}
+                  to={`/patents/${patent._id}`}
                   className="block hover:bg-gray-50"
                 >
                   <div className="px-4 py-4 sm:px-6">
@@ -80,26 +105,23 @@ export default function Patents() {
                       <div className="flex items-center">
                         <FileText className="h-5 w-5 text-gray-400 mr-3" />
                         <p className="text-sm font-medium text-indigo-600 truncate">
-                          {patent.title}
+                          {patent.name}
                         </p>
                       </div>
                       <div className="ml-2 flex-shrink-0 flex">
                         <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          {patent.status}
+                          {patent.category}
                         </p>
                       </div>
                     </div>
                     <div className="mt-2 sm:flex sm:justify-between">
                       <div className="sm:flex">
                         <p className="flex items-center text-sm text-gray-500">
-                          {patent.inventors.join(', ')}
+                          {patent.description}
                         </p>
                       </div>
                       <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                        <p>
-                          Registrada em{' '}
-                          {new Date(patent.filingDate).toLocaleDateString()}
-                        </p>
+                        <p>Registrada em {formatDate(patent.createdAt)}</p>
                       </div>
                     </div>
                   </div>

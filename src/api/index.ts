@@ -1,10 +1,8 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
-import dotenv from "dotenv";
 
-dotenv.config();
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL,
+  baseURL: "http://localhost:3000/api",
 });
 
 api.interceptors.request.use((config) => {
@@ -31,8 +29,8 @@ export const patents = {
     const response = await api.post("/patents", data);
     return response.data;
   },
-  search: async (query: string) => {
-    const response = await api.get("/patents/search", { params: { q: query } });
+  search: async () => {
+    const response = await api.get("/patents/search");
     return response.data;
   },
   getById: async (id: string) => {
