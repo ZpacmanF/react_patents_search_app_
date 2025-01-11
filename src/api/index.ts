@@ -29,8 +29,10 @@ export const patents = {
     const response = await api.post("/patents", data);
     return response.data;
   },
-  search: async () => {
-    const response = await api.get("/patents/search");
+  search: async (query: string = "") => {
+    const response = await api.get("/patents/search", {
+      params: { query },
+    });
     return response.data;
   },
   getById: async (id: string) => {
