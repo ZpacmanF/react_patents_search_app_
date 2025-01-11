@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Search, FileText } from "lucide-react";
 import { patents } from "../api";
 import toast from "react-hot-toast";
 import { Patent } from "../types";
+import { debounce } from "lodash";
 
 export default function Patents() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,7 +17,7 @@ export default function Patents() {
     setError(null);
     try {
       console.log("Iniciando busca com query:", query);
-      const response = await patents.search();
+      const response = await patents.search(query);
 
       if (Array.isArray(response)) {
         setPatentList(response);
@@ -35,13 +36,26 @@ export default function Patents() {
     }
   };
 
+  const debouncedSearch = useCallback(
+    debounce((query: string) => {
+      searchPatents(query);
+    }, 300),
+    []
+  );
+
   useEffect(() => {
-    searchPatents(""); // Busca todas as patentes ao carregar o componente
+    searchPatents("");
   }, []);
+
+  useEffect(() => {
+    debouncedSearch(searchQuery);
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [searchQuery, debouncedSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    searchPatents(searchQuery);
   };
 
   const formatDate = (dateString: string) => {
@@ -75,12 +89,6 @@ export default function Patents() {
             />
           </div>
         </div>
-        <button
-          type="submit"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Buscar
-        </button>
       </form>
 
       {loading ? (
