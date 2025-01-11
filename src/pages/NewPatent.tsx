@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Save } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { patents } from '../api';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Save } from "lucide-react";
+import toast from "react-hot-toast";
+import { patents } from "../api";
 
 export default function NewPatent() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    inventors: [''],
-    filingDate: new Date().toISOString().split('T')[0],
+    name: "",
+    description: "",
+    category: "",
+    inventors: [""],
   });
 
   const handleInventorChange = (index: number, value: string) => {
@@ -23,7 +23,7 @@ export default function NewPatent() {
   const addInventor = () => {
     setFormData({
       ...formData,
-      inventors: [...formData.inventors, ''],
+      inventors: [...formData.inventors, ""],
     });
   };
 
@@ -37,15 +37,18 @@ export default function NewPatent() {
     setLoading(true);
 
     try {
-      const data = {
-        ...formData,
-        inventors: formData.inventors.filter(Boolean),
+      const patentData = {
+        name: formData.name,
+        description: formData.description,
+        category: formData.category,
       };
-      await patents.create(data);
-      toast.success('Patente criada com sucesso');
-      navigate('/');
+
+      await patents.create(patentData);
+      toast.success("Patent created successfully");
+      navigate("/");
     } catch (error) {
-      toast.error('Erro ao criar patente');
+      toast.error("Error creating patent");
+      console.error("Error details:", error);
     } finally {
       setLoading(false);
     }
@@ -60,20 +63,40 @@ export default function NewPatent() {
         <form onSubmit={handleSubmit} className="mt-5 space-y-6">
           <div>
             <label
-              htmlFor="title"
+              htmlFor="name"
               className="block text-sm font-medium text-gray-700"
             >
-              Título
+              Nome
             </label>
             <input
               type="text"
-              name="title"
-              id="title"
+              name="name"
+              id="name"
               required
               className="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              value={formData.title}
+              value={formData.name}
               onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
+                setFormData({ ...formData, name: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="category"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Categoria
+            </label>
+            <input
+              type="text"
+              name="category"
+              id="category"
+              required
+              className="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+              value={formData.category}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
               }
             />
           </div>
@@ -100,17 +123,18 @@ export default function NewPatent() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Inventores
+              Inventor (Informação adicional)
             </label>
             <div className="mt-1 space-y-3">
               {formData.inventors.map((inventor, index) => (
                 <div key={index} className="flex gap-2">
                   <input
                     type="text"
-                    required
                     className="block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
                     value={inventor}
-                    onChange={(e) => handleInventorChange(index, e.target.value)}
+                    onChange={(e) =>
+                      handleInventorChange(index, e.target.value)
+                    }
                     placeholder={`Inventor ${index + 1}`}
                   />
                   {formData.inventors.length > 1 && (
@@ -134,30 +158,10 @@ export default function NewPatent() {
             </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="filingDate"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Data de Registro
-            </label>
-            <input
-              type="date"
-              name="filingDate"
-              id="filingDate"
-              required
-              className="mt-1 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              value={formData.filingDate}
-              onChange={(e) =>
-                setFormData({ ...formData, filingDate: e.target.value })
-              }
-            />
-          </div>
-
           <div className="flex justify-end">
             <button
               type="button"
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               className="mr-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
             >
               Cancelar
@@ -168,7 +172,7 @@ export default function NewPatent() {
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
             >
               <Save className="h-4 w-4 mr-2" />
-              {loading ? 'Salvando...' : 'Salvar'}
+              {loading ? "Salvando..." : "Salvar"}
             </button>
           </div>
         </form>
