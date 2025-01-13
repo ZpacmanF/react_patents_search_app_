@@ -1,12 +1,12 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { useAuthStore } from './store/authStore';
-import Layout from './components/Layout';
-import Login from './pages/Login';
-import Patents from './pages/Patents';
-import PatentDetails from './pages/PatentDetails';
-import NewPatent from './pages/NewPatent';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { useAuthStore } from "./store/authStore";
+import Layout from "./components/Layout";
+import Login from "./pages/Login";
+import Patents from "./pages/Patents";
+import PatentDetails from "./pages/PatentDetails";
+import NewPatent from "./pages/NewPatent";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = useAuthStore((state) => state.token);
@@ -15,7 +15,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/react_patents_search_app">
       <Toaster position="top-right" />
       <Routes>
         <Route path="/login" element={<Login />} />
