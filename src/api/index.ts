@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: "https://express-api-app-alpha.vercel.app/api",
 });
 
 api.interceptors.request.use((config) => {
@@ -48,4 +48,3 @@ export const patents = {
     return response.data;
   },
 };
-//
