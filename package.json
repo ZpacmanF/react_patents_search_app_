@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://ZpacmanF.github.io/react_patents_search_app",
+  "homepage": "https://ZpacmanF.github.io/react_patents_search_app_",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

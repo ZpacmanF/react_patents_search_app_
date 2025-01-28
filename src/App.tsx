@@ -15,7 +15,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 
 function App() {
   return (
-    <BrowserRouter basename="/react_patents_search_app">
+    <BrowserRouter basename="/react_patents_search_app_">
       <Toaster position="top-right" />
       <Routes>
         <Route path="/login" element={<Login />} />
